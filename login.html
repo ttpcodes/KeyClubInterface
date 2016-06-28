@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+		<style>
+			@font-face {
+				font-family: "Century Gothic";
+				src: url("gothic.woff");
+			}
+			html {
+				height: 100%;
+				font-family: "Century Gothic";
+			}
+			body {
+				background-image: url("OTC.jpg");
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.form {
+				background: rgba(192, 192, 192, 0.5);
+				font-size: 5vh;
+				text-align: center;
+				border-style: solid;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 1vh;
+				width: 80%;
+				height: 80%;
+			}
+			input[type=submit] {
+				background-color: rgba(0,128,128,.75);
+			}
+			input[type=submit] {
+				padding: 2vh;
+				color: rgba(0,0,0,0.75);
+			}
+			input[type=text],[type=password],[type=submit] {
+				font-size: 8vh;
+				line-height: 8vh;
+				margin-bottom: 1vh;
+				font-family: "Century Gothic";
+				text-align: center;
+				border-style: solid;
+				border-width: 2px;
+				background-color: rgba(192,192,192,.75);
+				color: #FFFFFF;
+				border-color: #000000;
+			}
+			::-webkit-input-placeholder {
+				color: rgba(0,0,0,0.5);
+			}
+			.error {
+				border-style: solid;
+				font-size: 2vh;
+				color: #8b0000;
+				padding: 1vh;
+				margin-bottom: 1vh;
+				background-color: rgba(204,30,92,.5);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="form">
+			<form action="session.php" method="post">
+				<h1>Login</h1>
+				<div class="error">
+					Incorrect Username or Password.
+				</div>
+				<input placeholder="Username" type="text" name="username"><br>
+				<input placeholder="Password" type="password" name="password"><br>
+				<input type="submit" value="Log In">
+			</form>
+		</div>
+	</body>
+</html>
