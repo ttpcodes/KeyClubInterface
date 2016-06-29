@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html style="height: 100%;">
 	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<style>
 			@font-face {
 				font-family: "Century Gothic";
@@ -28,6 +29,7 @@
 				padding: 1vh;
 				width: 80%;
 				height: 80%;
+				display: none;
 			}
 			input[type=submit] {
 				background-color: rgba(0,128,128,.75);
@@ -62,7 +64,7 @@
 		</style>
 	</head>
 	<body>
-		<div class="form">
+		<div id="main" class="form">
 			<form action="session.php" method="post">
 				<h1>Login</h1>
 				<div class="error">
@@ -73,5 +75,10 @@
 				<input type="submit" value="Log In">
 			</form>
 		</div>
+		<script>
+			$(document).ready(function() {
+				$('#main').fadeIn(1000);
+			});
+		</script>
 	</body>
 </html>

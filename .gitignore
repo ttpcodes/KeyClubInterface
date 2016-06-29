@@ -53,3 +53,6 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+
+# PHP configuration file
+config.ini.php
