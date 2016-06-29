@@ -65,10 +65,13 @@
 	</head>
 	<body>
 		<div id="main" class="form">
-			<form action="session.php" method="post">
+			<form name="login" action="session.php" method="post" onsubmit="return validateForm()">
 				<h1>Login</h1>
-				<div class="error">
+				<div id="incorrect" style="display: none;" class="error">
 					Incorrect Username or Password.
+				</div>
+				<div id="filled" style="display: none;" class="error">
+					All fields must be filled out.
 				</div>
 				<input placeholder="Username" type="text" name="username"><br>
 				<input placeholder="Password" type="password" name="password"><br>
@@ -76,9 +79,36 @@
 			</form>
 		</div>
 		<script>
-			$(document).ready(function() {
-				$('#main').fadeIn(1000);
-			});
+			
+			function validateForm() {
+				if (document.forms["login"]["username"].value == (null || "" ) || document.forms["login"]["password"].value == (null || "" )) {
+					document.getElementById("filled").style.display = "block";
+					return false;
+				}
+			}
+			var getUrlParameter = function getUrlParameter(sParam) {
+			    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+			        sURLVariables = sPageURL.split('&'),
+			        sParameterName,
+			        i;
+
+			    for (i = 0; i < sURLVariables.length; i++) {
+			        sParameterName = sURLVariables[i].split('=');
+
+			        if (sParameterName[0] === sParam) {
+			            return sParameterName[1] === undefined ? true : sParameterName[1];
+			        }
+			    }
+			};
+			var password = getUrlParameter('incorrect');
+			if (password == "1") {
+				document.getElementById("incorrect").style.display = "block";
+				document.getElementById("main").style.display = "block";
+			} else{
+				$(document).ready(function() {
+					$('#main').fadeIn(1000);
+				});
+			}
 		</script>
 	</body>
 </html>
