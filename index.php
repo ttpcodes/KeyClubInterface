@@ -1,11 +1,10 @@
 <?php
 	session_start();
-	$domain = "dev.tehtotalpwnage.io/projects/KeyClubInterface";
+	include 'database.php';
 	if (!$_SESSION['username']) {
-		header('Location: https://'.$domain.'/login.html');
+		header('Location: https://'.$webroot.'/login.php');
 	}
 	$events = array();
-	include 'database.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,8 +16,9 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
-		<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/datatables.min.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.12/datatables.min.js"></script>
 		<script src="//cdn.datatables.net/plug-ins/1.10.12/sorting/time.js"></script>
+		
 		<style>
 			html {
 				height: 100%;
@@ -70,7 +70,7 @@
 		<div class="tab-content container">
 			<div id="home" class="tab-pane fade in active">
 				<div class="page-header">
-					<h1>Hello <?php echo "DANK"; ?></h1>
+					<h1>Hello <?php echo $_SESSION['firstname']; ?>!</h1>
 				</div>
 			</div>
 			<div id="events" class="tab-pane fade">
@@ -142,7 +142,7 @@
 					<tbody>
 						<?php
 							if ($result = mysqli_query($conn, 
-								"SELECT name, date, description, calltime, ridecalltime, starttime, endtime, 
+								"SELECT eventid, name, date, description, calltime, ridecalltime, starttime, endtime, 
 								coordinator FROM upcoming WHERE accepting='1'")) {
 									while ($upcoming = mysqli_fetch_assoc($result)) {
 										?>
@@ -155,7 +155,7 @@
 											<td><?php echo $upcoming['starttime']; ?></td>
 											<td><?php echo $upcoming['endtime']; ?></td>
 											<td><?php echo $upcoming['coordinator']; ?></td>
-											<td>W I L D C A R D</td>
+											<td><?php echo "<a href='https://dev.tehtotalpwnage.io/projects/KeyClubInterface/signup.php?eventid=".$upcoming['eventid']."'>Sign Up</a>"; ?></td>
 										</tr>
 										<?php
 									}
