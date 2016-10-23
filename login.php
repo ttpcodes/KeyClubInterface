@@ -21,7 +21,7 @@
 		<script src="scripts.js"></script>
 	</head>
 	<body style="background-image: url('OTC.jpg'); align-items: center; height: 100%; justify-content: center; display: flex;">
-		<div class="container" style="border-style: solid; border-width: 1px; padding-bottom: 1vh; min-height: 100%; width: 100%; justify-content: center; align-items: center; display: flex; background: rgba(192,192,192,0.5);">
+		<div class="container" style="padding-bottom: 1vh; min-height: 100%; width: 100%; justify-content: center; align-items: center; display: flex; background: rgba(192,192,192,0.5);">
 			<form name="login" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post" onsubmit="return validateForm()" role="form">
 				<h1>Login</h1>
 				<div id="incorrect" style="display: none; border-width: 1px;" class="error">

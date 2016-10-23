@@ -1,9 +1,9 @@
 <?php
 	session_start();
-	include 'database.php';
 	if (!$_SESSION['username']) {
 		header('Location: https://'.$webroot.'/login.php');
 	}
+	include 'database.php';
 	$events = array();
 ?>
 <!DOCTYPE html>
