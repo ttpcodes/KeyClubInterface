@@ -20,3 +20,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 
 Route::get('/member', 'MemberController@view');
+
+Route::get('/officer', 'MemberController@isOfficer');

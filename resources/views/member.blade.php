@@ -1,4 +1,4 @@
-@extends('layouts.app');
+@extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -9,6 +9,7 @@
         </div>
         <div class="col-md-8">
             <h2>Recent News</h2>
+            <p></p>
         </div>
     </div>
 </div>

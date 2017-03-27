@@ -25,6 +25,9 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('officer-actions', function($user) {
+            return isset($user->member->officer);
+        });
         //
     }
 }
