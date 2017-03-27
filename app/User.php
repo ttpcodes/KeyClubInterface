@@ -27,6 +27,11 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function test()
+    {
+        echo("hello");
+    }
+
     public function member()
     {
         return $this->hasOne('App\Member');
