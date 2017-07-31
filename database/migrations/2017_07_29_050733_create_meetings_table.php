@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEventsTable extends Migration
+class CreateMeetingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('meetings', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->date('date');
-            $table->time('start');
-            $table->time('end');
-            $table->integer('hours');
-            $table->integer('officer_id');
+            $table->dateTime('date_time');
+            $table->text('information');
             $table->timestamps();
         });
     }
@@ -33,7 +29,7 @@ class CreateEventsTable extends Migration
     public function down()
     {
         Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('meetings');
         Schema::enableForeignKeyConstraints();
     }
 }

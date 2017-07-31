@@ -28,6 +28,8 @@ class CreateOfficersTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('officers');
+        Schema::enableForeignKeyConstraints();
     }
 }
