@@ -19,7 +19,6 @@
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
-    <script src="{{ asset('js/app.js') }}"></script>
 </head>
 <body>
     <div id="app">
@@ -44,6 +43,16 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
+                        <li><a href="/home">Home</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Meetings <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('meetings.index') }}">View All</a></li>
+                                <li><a href="{{ route('meetings.create') }}">Create</a></li>
+                            </ul>
+                        </li>
                         @yield('navbar')
                     </ul>
 
@@ -78,8 +87,8 @@
                 </div>
             </div>
         </nav>
-
         @yield('content')
     </div>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

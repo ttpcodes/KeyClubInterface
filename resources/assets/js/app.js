@@ -15,6 +15,10 @@ require('./bootstrap');
 
 Vue.component('example', require('./components/Example.vue'));
 
+Vue.component('date-time', require('./components/form/DateTimeInput.vue'));
+Vue.component('submit-button', require('./components/form/SubmitButton.vue'));
+Vue.component('text-area', require('./components/form/TextArea.vue'));
+
 const app = new Vue({
     el: '#app'
 });
