@@ -19,6 +19,11 @@ class Member extends Model
         return $this->belongsToMany('App\Event');
     }
 
+    public function meetings()
+    {
+        return $this->belongsToMany('App\Meeting');
+    }
+
     public function officer()
     {
         return $this->hasOne('App\Officer');

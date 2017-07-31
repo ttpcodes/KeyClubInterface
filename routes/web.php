@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/member', 'MemberController@view');
 
@@ -26,3 +26,5 @@ Route::get('/officer', 'OfficerController@view');
 Route::get('/officer/events', 'EventController@listEvents');
 Route::get('/officer/events/manage/{id?}', 'EventController@manageEvent');
 Route::post('/officer/events/manage/{id?}', 'EventController@updateEvent');
+
+Route::resource('meetings', 'MeetingController');
