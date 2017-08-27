@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Meeting;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+
+use App\MissingMember;
+use App\Member;
+use App\Meeting;
 
 class MeetingController extends Controller
 {
@@ -14,7 +19,10 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        return Meeting::all();
+        $meetings = Meeting::all();
+        return view('meeting/index', [
+            'meetings' => $meetings
+        ]);
     }
 
     /**
@@ -50,7 +58,9 @@ class MeetingController extends Controller
      */
     public function show(Meeting $meeting)
     {
-        //
+        return view('meeting/show', [
+            'meeting' => $meeting
+        ]);
     }
 
     /**
@@ -74,10 +84,30 @@ class MeetingController extends Controller
     public function update(Request $request, Meeting $meeting)
     {
         if ($request->has('members')) {
-            $members = App\Member::find($request->members);
+            $newMembers = array_diff($request->members, $meeting->members->modelKeys());
+            $duplicate = array_diff($request->members, $newMembers);
+            Log::info("Reduced " . count($request->members) . " to " . count($newMembers) . " new member entries");
+            $members = Member::find($newMembers);
+            Log::info($members->count() . " found out of " . count($newMembers));
+            $missing = array_diff($newMembers, $members->modelKeys());
             $meeting->members()->saveMany($members);
         }
-        return ['status' => 'success'];
+        if (count($missing) != 0) {
+            $newMissing = array_diff($missing, $meeting->missing_members->modelKeys());
+            $data = array();
+            foreach ($newMissing as $id) {
+                $data[] = array(
+                    "id" => $id,
+                    "meeting_id" => $meeting->id
+                );
+            }
+            MissingMember::insert($data);
+        }
+        return [
+            'status' => 'success',
+            'missing' => $missing,
+            'duplicate' => $duplicate
+        ];
     }
 
     /**

@@ -12,4 +12,8 @@ class Meeting extends Model
     {
         return $this->belongsToMany('App\Member');
     }
+
+    public function missing_members() {
+        return $this->hasMany('App\MissingMember');
+    }
 }
