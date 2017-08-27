@@ -28,3 +28,4 @@ Route::get('/officer/events/manage/{id?}', 'EventController@manageEvent');
 Route::post('/officer/events/manage/{id?}', 'EventController@updateEvent');
 
 Route::resource('meetings', 'MeetingController');
+Route::resource('members', 'MemberController');

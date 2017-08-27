@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Member extends Model
 {
-    //
+    protected $fillable = [
+        'id', 'first', 'last', 'nickname', 'suffix', 'email', 'address1', 'address2', 'city', 'country',
+        'state', 'postal', 'graduation', 'phone', 'birth', 'gender', 'secondary_id'
+    ];
+
     public $incrementing = false;
 
     public function user()

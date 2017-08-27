@@ -9,6 +9,12 @@ class CreateMembersTable extends Migration
     /**
      * Run the migrations.
      *
+     * These migrations create the members table, which defines information for club members
+     * as well as the relationship between a user account and a member instance.
+     *
+     * Finalized: August 24, 2017
+     * Edited on August 26, 2017 due to breaking issues with signed integer user_id
+     *
      * @return void
      */
     public function up()
@@ -30,7 +36,7 @@ class CreateMembersTable extends Migration
             $table->string('phone');
             $table->date('birth');
             $table->string('gender');
-            $table->integer('user_id');
+            $table->unsignedInteger('user_id');
             $table->timestamps();
 
             $table->primary('id');
