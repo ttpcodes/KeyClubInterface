@@ -22,8 +22,8 @@ class HomeController extends Controller
     public function index()
     {
         $homeLinks = Setting::firstOrCreate(['id' => 'homeLinks'], ['value' => null]);
+        $links = array();
         if ($homeLinks->value) {
-            $links = array();
             $homeLinks = explode(',', $homeLinks->value);
             for ($i = 0; $i < count($homeLinks); $i++) {
                 if ($i % 2 == 0) {
