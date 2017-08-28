@@ -26,6 +26,26 @@
                     </form>
                 </div>
             </div>
+            @if (Gate::allows('officer-actions'))
+            <div class="panel panel-default">
+                <div class="panel-heading">Application Settings</div>
+                <div class="panel-body">
+                    <p>These are the settings used for what every user sees on the website.</p>
+                    <form class="form-horizontal" role="form" method="POST" action="{{ route('settings.update') }}"
+                        enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        {{ method_field('PUT') }}
+                        <text-input label="Organization Name" name="organizationName" required
+                            value="{{ $errors->has('organizationName') ? old('organizationName') : $organizationName }}">
+                        </text-input>
+                        <text-input-group values="{{ $homeLinks }}">
+                        </text-input-group>
+                        <file-input label="New Background Picture" name="bgImage"></file-input>
+                        <submit-button btn-style="btn-primary" label="Update"></submit-button>
+                    </form>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>

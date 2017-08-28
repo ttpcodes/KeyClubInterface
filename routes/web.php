@@ -23,9 +23,17 @@ Route::get('/member', 'MemberController@view');
 Route::get('/officer', 'OfficerController@view');
 Route::get('/officer/events', 'EventController@listEvents');
 Route::get('/officer/events/manage/{id?}', 'EventController@manageEvent');
-Route::get('/settings', 'UserController@edit')->name('settings');
+Route::get('/settings/edit', 'UserController@edit')->name('settings.edit');
+
 Route::post('/officer/events/manage/{id?}', 'EventController@updateEvent');
+
+Route::put('/settings/update', 'SettingsController@update')->name('settings.update');
 
 Route::resource('meetings', 'MeetingController');
 Route::resource('members', 'MemberController');
+Route::resource('settings', 'SettingsController', ['only' =>
+    [
+        'index'
+    ]
+]);
 Route::resource('users', 'UserController');

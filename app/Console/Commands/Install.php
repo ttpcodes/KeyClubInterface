@@ -55,6 +55,7 @@ class Install extends Command
         $this->call('migrate');
         $this->call('db:seed');
         $this->call('install:oauth');
+        $this->call('storage:link');
         // $this->call('passport:install', [
         //     'user' => 1, '--queue' => 'default'
         // ]);

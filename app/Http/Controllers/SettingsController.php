@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Setting;
-use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
-class UserController extends Controller
+class SettingsController extends Controller
 {
     public function __construct() {
         $this->middleware('auth');
@@ -50,10 +46,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Setting  $setting
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(Setting $setting)
     {
         //
     }
@@ -61,10 +57,10 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Setting  $setting
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit()
     {
         /* $user->id being empty means that the edit form was called from the
          * settings menu. In this case, we'd want to assign the user to the
@@ -74,18 +70,16 @@ class UserController extends Controller
             $user = Auth::user();
             if (Gate::allows('officer-actions')) {
                 $homeLinks = Setting::firstOrCreate(['id' => 'homeLinks'], ['value' => null]);
-                // if ($homeLinks->value) {
-                //     $links = array();
-                //     $homeLinks = explode(',', $homeLinks->value);
-                //     for ($i = 0; $i < count($homeLinks); $i++) {
-                //         if ($i % 2 == 0) {
-                //             $links[] = array($homeLinks[$i], $homeLinks[$i + 1]);
-                //         }
-                //     }
-                // }
+                if ($homeLinks->value) {
+                    $homeLinks = explode(',', $homeLinks->value);
+                    print_r($homeLinks);
+                    foreach($homeLinks as $urlPair) {
+                        $urlPair = explode(',', $urlPair);
+                    }
+                }
                 return view('settings', [
                     'user' => $user,
-                    'homeLinks' => Setting::firstOrCreate(['id' => 'homeLinks'], ['value' => null])->value,
+                    'homeLinks' => $homeLinks,
                     'organizationName' => Setting::firstOrCreate(['id' => 'organizationName'], ['value' => 'Key Club'])->value,
                 ]);
             }
@@ -99,37 +93,50 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  \App\Setting  $setting
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request)
     {
-        $v = Validator::make($request->all(), [
-            'email' => 'required'
-        ]);
-        $v->sometimes('email', 'unique', function ($input) use ($user) {
-            return $input->email != $user->email;
-        });
-        $user->email = $request->email;
-        if (strlen($request->password) != 0) {
-            $user->password = Hash::make($request->password);
+        Setting::updateOrCreate(['id' => 'organizationName'], ['value' => $request->organizationName]);
+
+        $newHomeLinks = '';
+        for ($i = 0; $i < count($request->homeLinks); $i++) {
+            if (!$request->homeLinks[$i] || !$request->homeLinkValues[$i]) {
+                continue;
+            }
+            if ($newHomeLinks) {
+                $newHomeLinks .= ",";
+            }
+            $newHomeLinks .= $request->homeLinks[$i] . ',' . $request->homeLinkValues[$i];
         }
-        $user->save();
-        return view('settings', [
-            "status" => [
-                "user" => "success"
-            ],
-            "user" => $user
-        ]);
+        $homeLinks = Setting::updateOrCreate(['id' => 'homeLinks'], ['value' => $newHomeLinks]);
+
+        if ($request->hasFile('bgImage')) {
+            $path = $request->file('bgImage')->store('settings', 'public');
+            // Setting::updateOrCreate(['id' => 'bgImage'], ['value' => $path]);
+            $image = Setting::firstOrCreate(['id' => 'bgImage'], ['value' => null]);
+            if ($image->value) {
+                Storage::delete($image->value);
+            }
+
+            $image->value = $path;
+            $image->save();
+        }
+
+        return [
+            'status' => 'success',
+            'settings' => Setting::all()
+        ];
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\User  $user
+     * @param  \App\Setting  $setting
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Setting $setting)
     {
         //
     }

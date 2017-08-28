@@ -17,10 +17,12 @@ Vue.component('example', require('./components/Example.vue'));
 
 Vue.component('date-input', require('./components/form/DateInput.vue'));
 Vue.component('date-time', require('./components/form/DateTimeInput.vue'));
+Vue.component('file-input', require('./components/form/FileInput.vue'));
 Vue.component('password-input', require('./components/form/PasswordInput.vue'));
 Vue.component('submit-button', require('./components/form/SubmitButton.vue'));
 Vue.component('text-area', require('./components/form/TextArea.vue'));
 Vue.component('text-input', require('./components/form/TextInput.vue'));
+Vue.component('text-input-group', require('./components/form/TextInputGroup.vue'));
 
 const app = new Vue({
     el: '#app'
