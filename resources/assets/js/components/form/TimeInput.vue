@@ -3,7 +3,7 @@
         <label :for="name" class="col-md-4 control-label">{{label}}</label>
 
         <div class="col-md-6">
-            <input :id="name" type="date" class="form-control" :name="name" :placeholder="dateString" :required="required">
+            <input :id="name" type="time" class="form-control" :name="name" :placeholder="dateString" :required="required">
         </div>
     </div>
 </template>
@@ -22,7 +22,7 @@
             }
         },
         mounted() {
-            this.dateString = `${this.date.getFullYear()}-${this.date.getMonth() + 1}-${this.date.getDate()}`;
+            this.dateString = `${this.date.getHours()}:${this.date.getMinutes() }`;
         },
         props: ['label', 'name', 'required']
     }

@@ -20,7 +20,7 @@ class CreateEventsTable extends Migration
             $table->time('start');
             $table->time('end');
             $table->integer('hours');
-            $table->integer('officer_id');
+            $table->unsignedInteger('officer_id');
             $table->timestamps();
         });
     }

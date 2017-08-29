@@ -21,14 +21,15 @@ Route::get('/member', 'MemberController@view');
 
 // Officer panel related routes
 Route::get('/officer', 'OfficerController@view');
-Route::get('/officer/events', 'EventController@listEvents');
-Route::get('/officer/events/manage/{id?}', 'EventController@manageEvent');
+// Route::get('/officer/events', 'EventController@listEvents');
+// Route::get('/officer/events/manage/{id?}', 'EventController@manageEvent');
 Route::get('/settings/edit', 'UserController@edit')->name('settings.edit');
 
-Route::post('/officer/events/manage/{id?}', 'EventController@updateEvent');
+// Route::post('/officer/events/manage/{id?}', 'EventController@updateEvent');
 
 Route::put('/settings/update', 'SettingsController@update')->name('settings.update');
 
+Route::resource('events', 'EventController');
 Route::resource('meetings', 'MeetingController');
 Route::resource('members', 'MemberController');
 Route::resource('settings', 'SettingsController', ['only' =>
