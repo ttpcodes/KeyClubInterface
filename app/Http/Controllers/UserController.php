@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Member;
 use App\Setting;
 use App\User;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -23,7 +25,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return User::all();
     }
 
     /**
@@ -33,7 +35,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('user/create', [
+            'members' => Member::all()
+        ]);
     }
 
     /**
@@ -44,7 +48,36 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'member_id' => 'required',
+            'email' => 'nullable|email',
+            'password' => 'nullable'
+        ]);
+
+        $member = Member::find($request->member_id);
+        $email = $member->email;
+        $password = Str::random();
+
+        if ($request->has('email')) {
+            $email = $request->email;
+        }
+        if ($request->has('password')) {
+            $password = $request->password;
+        }
+
+        $user = User::create([
+            'name' => $member->first . ' ' . $member->last,
+            'email' => $email,
+            'password' => Hash::make($password)
+        ]);
+        $member->user()->associate($user);
+        $member->save();
+
+        return [
+            'status' => 'success',
+            'user' => $user,
+            'password' => $password
+        ];
     }
 
     /**

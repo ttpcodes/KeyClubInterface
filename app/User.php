@@ -28,8 +28,11 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function member()
-    {
-        return $this->hasOne('App\Member');
+    // public function member()
+    // {
+    //     return $this->hasOne('App\Member');
+    // }
+    public function member() {
+        return $this->belongsTo('App\Member');
     }
 }
