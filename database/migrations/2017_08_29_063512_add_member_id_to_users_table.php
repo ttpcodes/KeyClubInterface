@@ -19,7 +19,7 @@ class AddMemberIdToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedInteger('member_id');
+            $table->unsignedInteger('member_id')->nullable();
 
             $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
         });

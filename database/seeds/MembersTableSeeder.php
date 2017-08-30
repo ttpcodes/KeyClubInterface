@@ -29,7 +29,6 @@ class MembersTableSeeder extends Seeder
                 'phone' => '1-317-875-8755',
                 'birth' => date("1925-5-7"),
                 'gender' => 'male',
-                'user_id' => '1',
             ],
             [
                 'id' => 2,
@@ -48,7 +47,6 @@ class MembersTableSeeder extends Seeder
                 'phone' => '1-317-875-8755',
                 'birth' => date("1925-5-7"),
                 'gender' => 'male',
-                'user_id' => '2'
             ]
         ]);
     }
