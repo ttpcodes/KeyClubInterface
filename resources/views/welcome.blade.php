@@ -13,7 +13,9 @@
         <!-- Styles -->
         <style>
             .bg-image {
+                @if ($imagePath)
                 background-image: url("{{ asset('storage/' . $imagePath) }}");
+                @endif
                 background-repeat: no-repeat;
                 background-position: center;
                 background-size: cover;
