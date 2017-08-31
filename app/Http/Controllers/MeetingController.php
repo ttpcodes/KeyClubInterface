@@ -36,6 +36,7 @@ class MeetingController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Meeting::class);
         return view('meeting/create');
     }
 
@@ -47,6 +48,11 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Meeting::class);
+        $this->validate($request, [
+            'date_time' => 'required',
+            'information' => 'required'
+        ]);
         Meeting::create([
             'date_time' => $request->date_time,
             'information' => $request->information
@@ -75,7 +81,7 @@ class MeetingController extends Controller
      */
     public function edit(Meeting $meeting)
     {
-        //
+        $this->authorize('update', $meeting);
     }
 
     /**
@@ -87,6 +93,7 @@ class MeetingController extends Controller
      */
     public function update(Request $request, Meeting $meeting)
     {
+        $this->authorize('update', $meeting);
         if ($request->has('members')) {
             $newMembers = array_diff($request->members, $meeting->members->modelKeys());
             $duplicate = array_diff($request->members, $newMembers);
@@ -95,23 +102,28 @@ class MeetingController extends Controller
             Log::info($members->count() . " found out of " . count($newMembers));
             $missing = array_diff($newMembers, $members->modelKeys());
             $meeting->members()->saveMany($members);
-        }
-        if (count($missing) != 0) {
-            $newMissing = array_diff($missing, $meeting->missing_members->modelKeys());
-            $data = array();
-            foreach ($newMissing as $id) {
-                $data[] = array(
-                    "id" => $id,
-                    "meeting_id" => $meeting->id
-                );
+            if (count($missing) != 0) {
+                $newMissing = array_diff($missing, $meeting->missing_members->modelKeys());
+                $data = array();
+                foreach ($newMissing as $id) {
+                    $data[] = array(
+                        "id" => $id,
+                        "meeting_id" => $meeting->id
+                    );
+                }
+                MissingMember::insert($data);
             }
-            MissingMember::insert($data);
+            return [
+                'status' => 'success',
+                'missing' => $missing,
+                'duplicate' => $duplicate
+            ];
+        } else {
+            $this->validate($request, [
+                'date_time' => 'required',
+                'information' => 'required'
+            ]);
         }
-        return [
-            'status' => 'success',
-            'missing' => $missing,
-            'duplicate' => $duplicate
-        ];
     }
 
     /**
@@ -122,6 +134,6 @@ class MeetingController extends Controller
      */
     public function destroy(Meeting $meeting)
     {
-        //
+        $this->authorize('delete', $meeting);
     }
 }

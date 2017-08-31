@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,6 +32,7 @@ class EventController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Event::class);
         return view('event/create', [
             'officers' => Officer::all()
         ]);
@@ -40,6 +46,15 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Event::class);
+        $this->validate($request, [
+            'name' => 'required',
+            'date' => 'required',
+            'start' => 'required',
+            'end' => 'required',
+            'hours' => 'required',
+            'officer_id' => 'required'
+        ]);
         $event = Event::create([
             'name' => $request->name,
             'date' => $request->date,
@@ -73,6 +88,7 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
+        $this->authorize('update', $event);
         return view('event/edit', [
             'event' => $event,
             'members' => Member::all(),
@@ -89,6 +105,15 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
+        $this->authorize('update', $event);
+        $this->validate($request, [
+            'name' => 'required',
+            'date' => 'required',
+            'start' => 'required',
+            'end' => 'required',
+            'hours' => 'required',
+            'officer_id' => 'required'
+        ]);
         $event->name = $request->name;
         $event->date = $request->date;
         $event->start = $request->start;
@@ -116,6 +141,6 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        //
+        $this->authorize('delete', $event);
     }
 }

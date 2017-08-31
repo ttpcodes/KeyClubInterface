@@ -2,6 +2,14 @@
 
 namespace App\Providers;
 
+use App\Event;
+use App\Meeting;
+use App\Member;
+
+use App\Policies\EventPolicy;
+use App\Policies\MeetingPolicy;
+use App\Policies\MemberPolicy;
+
 use Laravel\Passport\Passport;
 
 use Illuminate\Support\Facades\Gate;
@@ -15,7 +23,9 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+        Event::class => EventPolicy::class,
+        Meeting::class => MeetingPolicy::class,
+        Member::class => MemberPolicy::class
     ];
 
     /**
@@ -30,7 +40,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('officer-actions', function($user) {
             return isset($user->member->officer);
         });
-        //
+
         Passport::routes();
     }
 }

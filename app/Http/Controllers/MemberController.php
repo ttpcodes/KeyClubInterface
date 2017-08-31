@@ -31,6 +31,7 @@ class MemberController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Member::class);
         return view('member/create');
     }
 
@@ -42,6 +43,7 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Member::class);
         $this->validate($request, [
             'id' => 'required|unique:members',
             'first' => 'required',
@@ -89,7 +91,7 @@ class MemberController extends Controller
      */
     public function edit(Member $member)
     {
-        //
+        $this->authorize('update', $member);
     }
 
     /**
@@ -101,7 +103,8 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        //
+        $this->authorize('update', $member);
+        return redirect()->route('members.index');
     }
 
     /**
@@ -112,6 +115,6 @@ class MemberController extends Controller
      */
     public function destroy(Member $member)
     {
-        //
+        $this->authorize('delete', $member);
     }
 }
