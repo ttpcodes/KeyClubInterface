@@ -13,7 +13,11 @@ class MemberPolicy
 
     public function before($user, $ability)
     {
-        if (Gate::allows('officer-actions')) {
+        /* The if statement here guarantees that only true or null are returned,
+         * rather than true or false, which is what we don't want or the function
+         * will just reject all member cases.
+         */
+        if(Gate::forUser($user)->allows('officer-actions')) {
             return true;
         }
     }
@@ -25,9 +29,9 @@ class MemberPolicy
      * @param  \App\MemberPolicy  $memberPolicy
      * @return mixed
      */
-    public function view(User $user, Member $memberPolicy)
+    public function view(User $user, Member $member)
     {
-        return true;
+        return $user->member->id == $member->id;
     }
 
     /**
@@ -48,9 +52,9 @@ class MemberPolicy
      * @param  \App\MemberPolicy  $memberPolicy
      * @return mixed
      */
-    public function update(User $user, Member $memberPolicy)
+    public function update(User $user, Member $member)
     {
-        return false;
+        return $user->member->id == $member->id;
     }
 
     /**
@@ -60,7 +64,7 @@ class MemberPolicy
      * @param  \App\MemberPolicy  $memberPolicy
      * @return mixed
      */
-    public function delete(User $user, Member $memberPolicy)
+    public function delete(User $user, Member $member)
     {
         return false;
     }
