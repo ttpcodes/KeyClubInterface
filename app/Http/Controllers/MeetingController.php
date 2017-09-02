@@ -9,11 +9,16 @@ use Illuminate\Http\Request;
 use App\MissingMember;
 use App\Member;
 use App\Meeting;
+use App\Services\MeetingService;
 
 class MeetingController extends Controller
 {
-    public function __construct() {
+    protected $meetings;
+
+    public function __construct(MeetingService $meetings)
+    {
         $this->middleware('auth');
+        $this->meetings = $meetings;
     }
 
     /**
@@ -23,7 +28,7 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        $meetings = Meeting::all();
+        $meetings = $this->meetings->index();
         return view('meeting/index', [
             'meetings' => $meetings
         ]);
@@ -93,37 +98,42 @@ class MeetingController extends Controller
      */
     public function update(Request $request, Meeting $meeting)
     {
-        $this->authorize('update', $meeting);
-        if ($request->has('members')) {
-            $newMembers = array_diff($request->members, $meeting->members->modelKeys());
-            $duplicate = array_diff($request->members, $newMembers);
-            Log::info("Reduced " . count($request->members) . " to " . count($newMembers) . " new member entries");
-            $members = Member::find($newMembers);
-            Log::info($members->count() . " found out of " . count($newMembers));
-            $missing = array_diff($newMembers, $members->modelKeys());
-            $meeting->members()->saveMany($members);
-            if (count($missing) != 0) {
-                $newMissing = array_diff($missing, $meeting->missing_members->modelKeys());
-                $data = array();
-                foreach ($newMissing as $id) {
-                    $data[] = array(
-                        "id" => $id,
-                        "meeting_id" => $meeting->id
-                    );
-                }
-                MissingMember::insert($data);
-            }
-            return [
-                'status' => 'success',
-                'missing' => $missing,
-                'duplicate' => $duplicate
-            ];
-        } else {
-            $this->validate($request, [
-                'date_time' => 'required',
-                'information' => 'required'
-            ]);
+        $response = $this->meetings->update($request, $meeting);
+        if ($response['status'] === 400) {
+            return response()->json($response, 400);
         }
+        return view('meeting/show', $response);
+        // $this->authorize('update', $meeting);
+        // if ($request->has('members')) {
+        //     $newMembers = array_diff($request->members, $meeting->members->modelKeys());
+        //     $duplicate = array_diff($request->members, $newMembers);
+        //     Log::info("Reduced " . count($request->members) . " to " . count($newMembers) . " new member entries");
+        //     $members = Member::find($newMembers);
+        //     Log::info($members->count() . " found out of " . count($newMembers));
+        //     $missing = array_diff($newMembers, $members->modelKeys());
+        //     $meeting->members()->saveMany($members);
+        //     if (count($missing) != 0) {
+        //         $newMissing = array_diff($missing, $meeting->missing_members->modelKeys());
+        //         $data = array();
+        //         foreach ($newMissing as $id) {
+        //             $data[] = array(
+        //                 "id" => $id,
+        //                 "meeting_id" => $meeting->id
+        //             );
+        //         }
+        //         MissingMember::insert($data);
+        //     }
+        //     return [
+        //         'status' => 'success',
+        //         'missing' => $missing,
+        //         'duplicate' => $duplicate
+        //     ];
+        // } else {
+        //     $this->validate($request, [
+        //         'date_time' => 'required',
+        //         'information' => 'required'
+        //     ]);
+        // }
     }
 
     /**

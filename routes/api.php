@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 Route::post('/oauth/grant/password', 'PasswordGrantController');
 
 Route::group(['middleware' => 'auth:api'], function() {
-    Route::resource('meetings', 'MeetingController', ['except' => [
+    Route::resource('meetings', 'Api\MeetingController', ['except' => [
         'create', 'edit'
     ]]);
 });

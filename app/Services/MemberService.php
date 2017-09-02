@@ -1,31 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use App\Member;
-use App\Services\MemberService;
-use Illuminate\Http\Request;
 
-class MemberController extends Controller
+class MemberService
 {
-    protected $members;
-
-    public function __construct(MemberService $members) {
-        $this->middleware('auth');
-        $this->members = $members;
-    }
-
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Member
      */
     public function index()
     {
-        $members = $this->members->index();
-        return view('member/index', [
-            'members' => $members
-        ]);
+        return Member::all();
     }
 
     /**
@@ -35,8 +23,7 @@ class MemberController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Member::class);
-        return view('member/create');
+        //
     }
 
     /**
@@ -47,13 +34,12 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Member::class);
         $this->validate($request, [
             'id' => 'required|unique:members',
             'first' => 'required',
             'last' => 'required'
         ]);
-        $member = Member::create([
+        return Member::create([
             'id' => $request->id,
             'first' => $request->first,
             'last' => $request->last,
@@ -72,8 +58,6 @@ class MemberController extends Controller
             'gender' => $request->gender,
             'secondary_id' => $request->secondary_id
         ]);
-
-        return [ 'status' => 200, 'member' => $member ];
     }
 
     /**
@@ -95,7 +79,7 @@ class MemberController extends Controller
      */
     public function edit(Member $member)
     {
-        $this->authorize('update', $member);
+        //
     }
 
     /**
@@ -107,8 +91,7 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        $this->authorize('update', $member);
-        return redirect()->route('members.index');
+        //
     }
 
     /**
@@ -119,6 +102,6 @@ class MemberController extends Controller
      */
     public function destroy(Member $member)
     {
-        $this->authorize('delete', $member);
+        // 
     }
 }
