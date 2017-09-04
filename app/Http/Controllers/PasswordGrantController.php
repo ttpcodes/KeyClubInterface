@@ -17,7 +17,7 @@ class PasswordGrantController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request) {
+    public function login(Request $request) {
         Log::info('Attempting verification of user credentials...');
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             Log::info('Successfully verified user. Now initiating password grant...');
@@ -51,5 +51,39 @@ class PasswordGrantController extends Controller
             'status' => 401,
             'error' => 'Incorrect credentials.'
         ], 401);
+    }
+
+    public function logout(Request $request)
+    {
+        $token = $request->user()->token();
+        $refreshToken = DB::table('oauth_refresh_tokens')->where('access_token_id', $token->id)
+            ->update(['revoked' => true]);
+        $token->revoke();
+
+        return ['status' => 'OK'];
+    }
+
+    public function refresh(Request $request)
+    {
+        $http = new GuzzleHttp\Client;
+        try {
+
+            $response = $http->post(env('APP_URL') . '/oauth/token', [
+                'form_params' => [
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => $request->token,
+                    'client_id' => env('PASSWORD_CLIENT_ID'),
+                    'client_secret' => env('PASSWORD_CLIENT_SECRET'),
+                    'scope' => '*'
+                ]
+            ]);
+
+            return json_decode((string) $response->getBody(), true);
+
+        } catch (RequestException $e) {
+            return response()->json([
+                'error' => 'Unauthenticated.'
+            ], 401);
+        }
     }
 }

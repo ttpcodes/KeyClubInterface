@@ -17,9 +17,12 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
-Route::post('/oauth/grant/password', 'PasswordGrantController');
+Route::post('/oauth/grant/password', 'PasswordGrantController@login');
+Route::post('/oauth/grant/refresh', 'PasswordGrantController@refresh');
 
 Route::group(['middleware' => 'auth:api'], function() {
+    Route::post('/logout', 'PasswordGrantController@logout');
+    
     Route::resource('meetings', 'Api\MeetingController', ['except' => [
         'create', 'edit'
     ]]);
