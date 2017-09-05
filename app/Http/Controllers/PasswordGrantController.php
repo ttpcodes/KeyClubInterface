@@ -23,11 +23,11 @@ class PasswordGrantController extends Controller
             Log::info('Successfully verified user. Now initiating password grant...');
             $http = new GuzzleHttp\Client;
             try {
-                $response = $http->post(env('APP_URL') . '/oauth/token', [
+                $response = $http->post(config('app.url') . '/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
-                        'client_id' => env('PASSWORD_CLIENT_ID'),
-                        'client_secret' => env('PASSWORD_CLIENT_SECRET'),
+                        'client_id' => config('oauth.password_client_id'),
+                        'client_secret' => config('oauth.password_client_secret'),
                         'username' => $request->email,
                         'password' => $request->password,
                         'scope' => '*'
@@ -43,8 +43,9 @@ class PasswordGrantController extends Controller
             } catch (RequestException $e) {
                 return response()->json([
                     'status' => 500,
-                    'error' => 'PASSWORD_CLIENT improperly configured.'
-                ]);
+                    'error' => 'GuzzleHttp returned a RequestException.',
+                    'message' => $e->getMessage()
+                ], 500);
             }
         }
         return response()->json([
