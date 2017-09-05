@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\Install::class,
-        Commands\Oauth::class
+        Commands\Oauth::class,
+        Commands\Upgrade::class
     ];
 
     /**

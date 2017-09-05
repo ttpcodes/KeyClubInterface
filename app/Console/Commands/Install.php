@@ -38,6 +38,7 @@ class Install extends Command
     public function handle()
     {
         $this->info('Beginning app installation process...');
+        $bar = $this->output->createProgressBar(7);
 
 
         /**
@@ -47,15 +48,32 @@ class Install extends Command
          */
 
         $this->call('key:generate');
+        $bar->advance();
+        $this->info('');
 
         /**
          * Don't use "migrate:refresh --seed" here, that command does not work
          * when called in this manner.
          */
         $this->call('migrate');
+        $bar->advance();
+        $this->info('');
         $this->call('db:seed');
+        $bar->advance();
+        $this-info('');
         $this->call('install:oauth');
+        $bar->advance();
+        $this->info('');
         $this->call('storage:link');
+        $bar->advance();
+        $this->info('');
+        $this->call('config:cache');
+        $bar->advance();
+        $this->info('');
+        $this->call('route:cache');
+        $bar->advance();
+        $bar->finish();
+        $this->info('');
         // $this->call('passport:install', [
         //     'user' => 1, '--queue' => 'default'
         // ]);
