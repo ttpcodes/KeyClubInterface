@@ -12,7 +12,7 @@
                             Token generated successfully! Token is <strong>{{$data['token']}}</strong>
                         </div>
                     @endisset
-                    <form class="form-horizontal" role="form" method="POST" action="{{ route('remind.access_tokens.update') }}">
+                    <form class="form-horizontal" role="form" method="POST" action="{{ route('remind.access_tokens.store') }}">
                         {{ csrf_field() }}
                         <input type="hidden" name="settings" value="true">
                         <text-input label="Email" name="email" required
