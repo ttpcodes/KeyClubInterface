@@ -11,23 +11,23 @@
 |
 */
 
-Route::get('/', 'HomeController@index');
-
 Auth::routes();
 
+Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@home')->name('home');
-
 Route::get('/member', 'MemberController@view');
+Route::get('/settings/edit', 'SettingsController@edit')->name('settings.edit');
 
-// Officer panel related routes
-Route::get('/officer', 'OfficerController@view');
-// Route::get('/officer/events', 'EventController@listEvents');
-// Route::get('/officer/events/manage/{id?}', 'EventController@manageEvent');
-Route::get('/settings/edit', 'UserController@edit')->name('settings.edit');
+Route::put('/settings', 'SettingsController@update')->name('settings.update');
 
-// Route::post('/officer/events/manage/{id?}', 'EventController@updateEvent');
+Route::prefix('remind')->group(function() {
+    Route::get('access_tokens', 'RemindController@accessTokensCreate')->name('remind.access_tokens.create');
+    Route::get('classes', 'RemindController@classes');
+    Route::get('user', 'RemindController@user')->name('remind.user');
 
-Route::put('/settings/update', 'SettingsController@update')->name('settings.update');
+    Route::post('access_tokens', 'RemindController@accessTokens')->name('remind.access_tokens.store');
+    Route::post('classes/invitations', 'RemindController@classesInvitations')->name('remind.classes.invitations.store');
+});
 
 Route::resource('events', 'EventController');
 Route::resource('meetings', 'MeetingController');

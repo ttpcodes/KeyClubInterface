@@ -27,6 +27,21 @@
                                             <span class="glyphicon glyphicon-option-horizontal dropdown-toggle" data-toggle="dropdown">
                                             </span>
                                             <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="{{ route('remind.classes.invitations.store') }}"
+                                                        onclick="event.preventDefault();
+                                                                 document.getElementById('memberID').value='{{$member->id}}';
+                                                                 document.getElementById('classID').value=prompt('Class ID');
+                                                                 document.getElementById('invite-form').submit();">
+                                                        Send Remind Invite
+                                                    </a>
+
+                                                    <form id="invite-form" action="{{ route('remind.classes.invitations.store') }}" method="POST" style="display: none;">
+                                                        {{ csrf_field() }}
+                                                        <text-input name="memberID"></text-input>
+                                                        <text-input name="classID"></text-input>
+                                                    </form>
+                                                </li>
                                             </ul>
                                         </div>
                                     </td>

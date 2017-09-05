@@ -73,6 +73,15 @@
                         </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Remind <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('remind.access_tokens.create') }}">Get Access Token</a></li>
+                                <li><a href="{{ route('remind.user') }}">Get User Information</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 Users <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
