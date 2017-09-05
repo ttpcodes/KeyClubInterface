@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Setting;
+
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
@@ -66,23 +70,23 @@ class SettingsController extends Controller
          * settings menu. In this case, we'd want to assign the user to the
          * currently authenticated user while checking for admin privileges.
          */
-        if (!$user->id) {
-            $user = Auth::user();
-            if (Gate::allows('officer-actions')) {
-                $homeLinks = Setting::firstOrCreate(['id' => 'homeLinks'], ['value' => null]);
-                if ($homeLinks->value) {
-                    $homeLinks = explode(',', $homeLinks->value);
-                    print_r($homeLinks);
-                    foreach($homeLinks as $urlPair) {
-                        $urlPair = explode(',', $urlPair);
-                    }
-                }
-                return view('settings', [
-                    'user' => $user,
-                    'homeLinks' => $homeLinks,
-                    'organizationName' => Setting::firstOrCreate(['id' => 'organizationName'], ['value' => 'Key Club'])->value,
-                ]);
-            }
+        $user = Auth::user();
+        if (Gate::allows('officer-actions')) {
+            $homeLinks = Setting::firstOrCreate(['id' => 'homeLinks'], ['value' => null]);
+            // if ($homeLinks->value) {
+            //     $homeLinks = explode(',', $homeLinks->value);
+            //     print_r($homeLinks);
+            //     foreach($homeLinks as $urlPair) {
+            //         $urlPair = explode(',', $urlPair);
+            //     }
+            // }
+            return view('settings', [
+                'user' => $user,
+                'homeLinks' => $homeLinks->value,
+                'organizationName' => Setting::firstOrCreate(['id' => 'organizationName'], ['value' => 'Key Club'])->value,
+                'remindEmail' => Setting::firstOrCreate(['id' => 'remindEmail'], ['value' => null])->value,
+                'remindPassword' => Setting::firstOrCreate(['id' => 'remindPassword'], ['value' => null])->value
+            ]);
         }
         return view('settings', [
             'user' => $user
@@ -99,6 +103,10 @@ class SettingsController extends Controller
     public function update(Request $request)
     {
         Setting::updateOrCreate(['id' => 'organizationName'], ['value' => $request->organizationName]);
+        Setting::updateOrCreate(['id' => 'remindEmail'], ['value' => $request->remindEmail]);
+        if ($request->has('remindPassword')) {
+            Setting::updateOrCreate(['id' => 'remindPassword'], ['value' => $request->remindPassword]);
+        }
 
         $newHomeLinks = '';
         for ($i = 0; $i < count($request->homeLinks); $i++) {
@@ -123,11 +131,7 @@ class SettingsController extends Controller
             $image->value = $path;
             $image->save();
         }
-
-        return [
-            'status' => 'success',
-            'settings' => Setting::all()
-        ];
+        return back()->with('status', '200-settings');
     }
 
     /**

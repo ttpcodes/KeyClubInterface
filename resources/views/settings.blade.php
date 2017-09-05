@@ -7,7 +7,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">User Settings</div>
                 <div class="panel-body">
-                    @isset ($status['user'])
+                    @if (Session::get('status') == '200-user')
                         <div class="alert alert-success">
                             User information updated successfully!
                         </div>
@@ -16,6 +16,7 @@
                     <form class="form-horizontal" role="form" method="POST" action="{{ route('users.update', $user->id) }}">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
+                        <input type="hidden" name="settings" value="true">
                         <text-input label="Email" name="email" required
                             value="{{ $errors->has('email') ? old('email') : $user->email }}"
                             @if ($errors->has('email'))
@@ -30,6 +31,11 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Application Settings</div>
                 <div class="panel-body">
+                    @if (Session::get('status') == '200-settings')
+                        <div class="alert alert-success">
+                            Settings updated successfully!
+                        </div>
+                    @endisset
                     <p>These are the settings used for what every user sees on the website.</p>
                     <form class="form-horizontal" role="form" method="POST" action="{{ route('settings.update') }}"
                         enctype="multipart/form-data">

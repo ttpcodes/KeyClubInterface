@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Member;
 use App\Setting;
 use App\User;
+
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -120,6 +124,8 @@ class UserController extends Controller
                     'user' => $user,
                     'homeLinks' => Setting::firstOrCreate(['id' => 'homeLinks'], ['value' => null])->value,
                     'organizationName' => Setting::firstOrCreate(['id' => 'organizationName'], ['value' => 'Key Club'])->value,
+                    'remindEmail' => Setting::firstOrCreate(['id' => 'remindEmail'], ['value' => null])->value,
+                    'remindPassword' => Setting::firstOrCreate(['id' => 'remindPassword'], ['value' => null])->value
                 ]);
             }
         }
@@ -148,12 +154,23 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
         $user->save();
-        return view('settings', [
+        $response = [
             "status" => [
-                "user" => "success"
+                "user" => 200
             ],
             "user" => $user
-        ]);
+        ];
+        if (Gate::allows('officer-actions')) {
+            $response = array_merge($response, [
+                'homeLinks' => Setting::firstOrCreate(['id' => 'homeLinks'], ['value' => null]),
+                'organizationName' => Setting::firstOrCreate(['id' => 'organizationName'], ['value' => 'Key Club'])->value
+            ]);
+        }
+        if ($request->has('settings')) {
+            Log::info('Form was accessed from the settings panel. Returning back.');
+            return back()->with('status', '200-user');
+        }
+        return $response;
     }
 
     /**
