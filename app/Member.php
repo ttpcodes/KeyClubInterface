@@ -13,11 +13,6 @@ class Member extends Model
 
     public $incrementing = false;
 
-    // public function user()
-    // {
-    //     return $this->belongsTo('App\User');
-    // }
-
     public function user()
     {
         return $this->hasOne('App\User');

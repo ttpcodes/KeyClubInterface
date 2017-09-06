@@ -11,7 +11,7 @@
                         <div class="alert alert-success">
                             User information updated successfully!
                         </div>
-                    @endisset
+                    @endif
                     <p>These are the settings used for when you log into the application.</p>
                     <form class="form-horizontal" role="form" method="POST" action="{{ route('users.update', $user->id) }}">
                         {{ csrf_field() }}

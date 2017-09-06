@@ -91,10 +91,10 @@ class MemberControllerTest extends TestCase
     public function testStore()
     {
         $member = factory(Member::class)->create();
-        $officer = factory(Officer::class)->create([
+        $user = factory(User::class)->create([
             'member_id' => $member->id
         ]);
-        $user = factory(User::class)->create([
+        factory(Officer::class)->create([
             'member_id' => $member->id
         ]);
 
@@ -128,14 +128,8 @@ class MemberControllerTest extends TestCase
         // Test request against the same user.
         $request = $this->actingAs($user)->get('/members/' . $member->id);
         $request->assertStatus(200);
-        // $request->assertViewHas('member');
-
-        // Test request request against other user.
-        $officer = factory(Officer::class)->create([
-            'member_id' => $member->id
-        ]);
-        $request2 = $this->actingAs($user)->get('/members/' . $member2->id);
-        $request2->assertStatus(200);
+        $request->assertViewIs('member.show');
+        $request->assertViewHas('member');
     }
 
     public function testEdit()
@@ -144,7 +138,6 @@ class MemberControllerTest extends TestCase
         $user = factory(User::class)->create([
             'member_id' => $member->id
         ]);
-        $member2 = factory(Member::class)->create();
         factory(Officer::class)->create([
             'member_id' => $member->id
         ]);
@@ -152,14 +145,7 @@ class MemberControllerTest extends TestCase
         // Test request against the same user.
         $request = $this->actingAs($user)->get('/members/' . $member->id . '/edit');
         $request->assertStatus(200);
-        // $request->assertViewHas('member');
-
-        // Test request against other user.
-        $officer = factory(Officer::class)->create([
-            'member_id' => $member->id
-        ]);
-        $request3 = $this->actingAs($user)->get('/members/' . $member2->id . '/edit');
-        $request3->assertStatus(200);
+        $request->assertViewHas('member');
     }
 
     public function testUpdate()
@@ -178,7 +164,7 @@ class MemberControllerTest extends TestCase
 
         $faker = \Faker\Factory::create();
         $form = [
-            'id' => $faker->randomNumber,
+            'id' => $member->id,
             'first' => $faker->firstName,
             'last' => $faker->lastName,
             'email' => $faker->safeEmail,
@@ -188,11 +174,34 @@ class MemberControllerTest extends TestCase
 
         // Test proper request.
         $request2 = $this->actingAs($user)->put('/members/' . $member->id, $form);
-        // $request2->assertStatus(200);
-        // $request2->assertDatabaseHas($form);
+        $request2->assertStatus(200);
+        $request2->assertViewIs('member.show');
+        $request2->assertViewHas('status', 200);
+        $this->assertDatabaseHas('members', $form);
     }
 
     public function testDelete()
     {
+        $member = factory(Member::class)->create();
+        $member2 = factory(Member::class)->create();
+        $user = factory(User::class)->create([
+            'member_id' => $member->id
+        ]);
+        factory(Officer::class)->create([
+            'member_id' => $member->id
+        ]);
+
+        $request = $this->actingAs($user)->delete('/members/' . $member->id);
+        $request->assertStatus(302);
+        $request->assertSessionHas('status', 403);
+        $request->assertSessionHas('type', 'self');
+
+        $request2 = $this->actingAs($user)->delete('/members/' . $member2->id);
+        $request2->assertStatus(302);
+        $request2->assertSessionHas('status', 200);
+        $request2->assertSessionHas('type', 'delete');
+        $this->assertDatabaseMissing('members', [
+            'id' => $member2->id
+        ]);
     }
 }
