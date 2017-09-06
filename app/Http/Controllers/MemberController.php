@@ -80,7 +80,11 @@ class MemberController extends Controller
             'secondary_id' => $request->secondary_id
         ]);
 
-        return [ 'status' => 200, 'member' => $member ];
+        return view('member.index', [
+            'status' => 200,
+            'member' => $member,
+            'members' => Member::all()
+        ]);
     }
 
     /**

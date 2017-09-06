@@ -114,6 +114,8 @@ class MemberControllerTest extends TestCase
         ];
         $request2 = $this->actingAs($user)->post('/members', $formData);
         $request2->assertStatus(200);
+        $request2->assertViewIs('member.index');
+        $request2->assertViewHas('status')->assertViewHas('member')->assertViewHas('members');
         $this->assertDatabaseHas('members', $formData);
     }
 

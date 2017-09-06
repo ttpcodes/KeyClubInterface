@@ -20,6 +20,12 @@
                             @break
                     @endswitch
 
+                    @isset($status)
+                        <div class="alert alert-success">
+                            User added successfully! <a href="{{ route('members.create') }}" class="alert-link">Add another?</a>
+                        </div>
+                    @endisset
+
                     <table id="table" style="width: 100%;">
                         <thead>
                             <tr>
