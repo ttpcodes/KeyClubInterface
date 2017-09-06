@@ -62,10 +62,10 @@ class UserController extends Controller
         $email = $member->email;
         $password = Str::random();
 
-        if ($request->has('email')) {
+        if ($request->filled('email')) {
             $email = $request->email;
         }
-        if ($request->has('password')) {
+        if ($request->filled('password')) {
             $password = $request->password;
         }
 

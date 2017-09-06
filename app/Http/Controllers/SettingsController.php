@@ -104,7 +104,7 @@ class SettingsController extends Controller
     {
         Setting::updateOrCreate(['id' => 'organizationName'], ['value' => $request->organizationName]);
         Setting::updateOrCreate(['id' => 'remindEmail'], ['value' => $request->remindEmail]);
-        if ($request->has('remindPassword')) {
+        if ($request->filled('remindPassword')) {
             Setting::updateOrCreate(['id' => 'remindPassword'], ['value' => $request->remindPassword]);
         }
 
