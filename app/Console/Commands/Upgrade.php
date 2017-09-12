@@ -41,15 +41,18 @@ class Upgrade extends Command
 
         if ($this->confirm('Are you sure you wish to continue?')) {
             $this->call('down');
-            $bar = $this->output->createProgressBar(3);
+            $bar = $this->output->createProgressBar(4);
 
             $this->call('migrate');
             $bar->advance();
             $this->info('');
             $this->call('config:cache');
             $bar->advance();
-            $this->info(''); 
+            $this->info('');
             $this->call('route:cache');
+            $bar->advance();
+            $this->info('');
+            $this->call('view:clear');
             $bar->advance();
             $bar->finish();
             $this->info('');
