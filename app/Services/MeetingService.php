@@ -98,26 +98,33 @@ class MeetingService
         }
         $response = [];
         if ($request->has('members')) {
+            // Removes all existing members from the array to leave new members.
             $newMembers = array_diff($request->members, $meeting->members->modelKeys());
+            // Removes all new members from the array to leave duplicate members.
             $duplicate = array_diff($request->members, $newMembers);
             Log::info("Reduced " . count($request->members) . " to " . count($newMembers) . " new member entries");
+            // Searches for new members where possible.
             $members = Member::find($newMembers);
             Log::info($members->count() . " found out of " . count($newMembers));
-            $missing = array_diff($newMembers, $members->modelKeys());
+
+            $missing = array_diff($newMembers, $members->modelKeys(), $meeting->missing_members->modelKeys());
             $meeting->members()->saveMany($members);
             if (count($missing) != 0) {
-                $newMissing = array_diff($missing, $meeting->missing_members->modelKeys());
                 $data = array();
-                foreach ($newMissing as $id) {
+                foreach ($missing as $id) {
                     $data[] = array(
                         "id" => $id,
                         "meeting_id" => $meeting->id
                     );
                 }
-                MissingMember::insert($data);
+                $meeting->missing_members()->createMany($data);
+                $meeting->refresh();
+                $response = array_merge($response, [
+                    'missing' => $meeting->missing_members->count()
+                ]);
             }
+            $meeting->refresh();
             $response = array_merge($response, [
-                'missing' => $missing,
                 'duplicate' => $duplicate
             ]);
         }
@@ -129,6 +136,7 @@ class MeetingService
             $meeting->date_time = $request->date_time;
             $meeting->information = $request->information;
             $meeting->save();
+            $meeting->refresh();
         }
         $response = array_merge($response, [
             'status' => 200,
