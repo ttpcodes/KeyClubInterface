@@ -30,8 +30,9 @@
                         <thead>
                             <tr>
                                 <th style="width: 5%;">ID</th>
-                                <th style="width: 45%;">First Name</th>
-                                <th style="width: 45%;">Last Name</th>
+                                <th style="width: 35%;">First Name</th>
+                                <th style="width: 35%;">Last Name</th>
+                                <th style="width: 20%;">Date Added</th>
                                 <th style="width: 5%;">More</th>
                             </tr>
                         </thead>
@@ -41,6 +42,7 @@
                                     <td>{{$member->id}}</td>
                                     <td>{{$member->first}}</td>
                                     <td>{{$member->last}}</td>
+                                    <td data-order="{{$member->created_at}}">{{$member->created_at->format('d M Y, h:i A')}}</td>
                                     <td>
                                         <div class="dropdown">
                                             <span class="glyphicon glyphicon-option-horizontal dropdown-toggle" data-toggle="dropdown">
