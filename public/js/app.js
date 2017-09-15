@@ -27659,7 +27659,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
    * @param {string} label - The label for the input that will appear on the form. Required.
    * @param {string} name - The name of the input that the server will receive. Required.
    */
-  props: ['name', 'label']
+  props: ['name', 'label', 'value']
 });
 
 /***/ }),
@@ -48377,6 +48377,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "id": _vm.name,
       "type": "datetime-local",
       "name": _vm.name
+    },
+    domProps: {
+      "value": _vm.value
     }
   })])])
 },staticRenderFns: []}

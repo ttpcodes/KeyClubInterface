@@ -97,6 +97,16 @@ class MeetingService
             ];
         }
         $response = [];
+        if ($request->has('meeting_json')) {
+            if (!$request->has('members')) {
+                $request->members = [];
+            }
+            $json = json_decode($request->input('meeting_json'));
+            $request->members = array_merge($json->members, $request->members);
+            $request->members = array_filter($request->members, function ($id) {
+                return is_numeric($id);
+            });
+        }
         if ($request->has('members')) {
             // Removes all existing members from the array to leave new members.
             $newMembers = array_diff($request->members, $meeting->members->modelKeys());

@@ -87,6 +87,10 @@ class MeetingController extends Controller
     public function edit(Meeting $meeting)
     {
         $this->authorize('update', $meeting);
+        return view('meeting.edit', [
+            'meeting' => $meeting,
+            'members' => Member::all()
+        ]);
     }
 
     /**

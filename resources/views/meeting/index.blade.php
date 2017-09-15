@@ -26,6 +26,7 @@
                                             </span>
                                             <ul class="dropdown-menu">
                                                 <li><a href="{{ route('meetings.show', $meeting->id) }}">View Details</a></li>
+                                                <li><a href="{{ route('meetings.edit', $meeting->id) }}">Edit</a></li>
                                             </ul>
                                         </div>
                                     </td>
