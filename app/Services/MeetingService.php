@@ -90,7 +90,9 @@ class MeetingService
     public function update(Request $request, Meeting $meeting)
     {
         $this->authorize('update', $meeting);
+        Log::info('Processing meeting update.');
         if (count($request->all()) === 0) {
+            Log::info('Received empty response. Returning 400.');
             return [
                 'status' => 400,
                 'error' => 'Empty request.'
@@ -98,6 +100,7 @@ class MeetingService
         }
         $response = [];
         if ($request->has('meeting_json')) {
+            Log::info('Found meeting_json attribute. Parsing.');
             if (!$request->has('members')) {
                 $request->members = [];
             }
@@ -108,6 +111,7 @@ class MeetingService
             });
         }
         if ($request->has('members')) {
+            Log::info('Found members attribute. Parsing.');
             // Removes all existing members from the array to leave new members.
             $newMembers = array_diff($request->members, $meeting->members->modelKeys());
             // Removes all new members from the array to leave duplicate members.

@@ -16,13 +16,13 @@
                         <date-time label="Date & Time" name="date_time" value="{{ $meeting->date_time }}"></date-time>
                         <text-area label="Information" name="information" value="{{ $meeting->information }}"></text-area>
 
-                        <!-- <data-list-input datalist="memberlist"></data-list-input>
+                        <data-list-input datalist="memberlist"></data-list-input>
 
                         <datalist id="memberlist">
                         @foreach ($members as $member)
                             <option value="{{$member->id}}">{{ $member->first . ' ' . $member->last }}</option>
                         @endforeach
-                        </datalist> -->
+                        </datalist>
 
                         <submit-button btn-style="btn-primary" label="Update"></submit-button>
                     </form>
