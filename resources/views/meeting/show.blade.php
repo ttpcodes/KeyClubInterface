@@ -43,6 +43,25 @@
                     </table>
                 </div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Missing Members</div>
+                <div class="panel-body">
+                    <table id="table2">
+                        <thead>
+                            <tr>
+                                <th style="width: 100%;">ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($meeting->missing_members as $missing)
+                            <tr>
+                                <td>{{$missing->id}}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -51,8 +70,9 @@
 @section('scripts')
 <script>
     $(document).ready(() => {
-        console.log("Initializing DataTable...");
+        console.log("Initializing DataTables...");
         $('#table').DataTable();
+        $('#table2').DataTable();
     });
 </script>
 @endsection
