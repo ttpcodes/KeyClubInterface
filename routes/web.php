@@ -15,7 +15,7 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@home')->name('home');
-Route::get('/member', 'MemberController@view');
+Route::get('/meetings/table', 'MeetingTableController')->name('meetings.table');
 Route::get('/settings/edit', 'SettingsController@edit')->name('settings.edit');
 
 Route::put('/settings', 'SettingsController@update')->name('settings.update');

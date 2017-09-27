@@ -8,8 +8,13 @@ window._ = require('lodash');
  */
 
 window.$ = window.jQuery = require('jquery');
-require('datatables.net');
 require('datatables.net-bs');
+
+/* Normally, the Bootstrap versions of these packages should be loaded, but Webpack
+ * is dumb and refuses to recognize NPM packages without a "main" declaration.
+ */
+require('datatables.net-fixedcolumns');
+require('datatables.net-fixedheader');
 
 require('bootstrap-sass');
 
