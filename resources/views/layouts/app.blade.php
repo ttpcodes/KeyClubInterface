@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
     <!-- Scripts -->
     <script>
@@ -59,6 +59,7 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('meetings.index') }}">View All</a></li>
+                                <li><a href="{{ route('meetings.table') }}">Show Table</a></li>
                                 <li><a href="{{ route('meetings.create') }}">Create</a></li>
                             </ul>
                         </li>
@@ -126,7 +127,7 @@
         </nav>
         @yield('content')
     </div>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
     @yield('scripts')
 </body>
 </html>
