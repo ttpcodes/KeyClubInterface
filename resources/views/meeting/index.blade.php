@@ -30,22 +30,14 @@
                                                 <li>
                                                     <a href="{{ route('meetings.update', $meeting->id) }}"
                                                     onclick="event.preventDefault();
+                                                            document.getElementById('duplicate-form').action = '{{ route('meetings.update', $meeting->id) }}';
                                                             document.getElementById('duplicate-form').submit();">Fix Duplicate Members</a>
-                                                    <form id="duplicate-form" method="POST" action="{{ route('meetings.update', $meeting->id) }}" style="display: none;">
-                                                        {{ csrf_field() }}
-                                                        {{ method_field('PUT') }}
-                                                        <input type="hidden" name="duplicate">
-                                                    </form>
                                                 </li>
                                                 <li>
                                                     <a href="{{ route('meetings.update', $meeting->id) }}"
                                                     onclick="event.preventDefault();
+                                                            document.getElementById('missing-form').action = '{{ route('meetings.update', $meeting->id) }}';
                                                             document.getElementById('missing-form').submit();">Fix Missing Members</a>
-                                                    <form id="missing-form" method="POST" action="{{ route('meetings.update', $meeting->id) }}" style="display: none;">
-                                                        {{ csrf_field() }}
-                                                        {{ method_field('PUT') }}
-                                                        <input type="hidden" name="missing">
-                                                    </form>
                                                 </li>
                                             </ul>
                                         </div>
@@ -58,6 +50,16 @@
             </div>
         </div>
     </div>
+    <form id="duplicate-form" method="POST" style="display: none;">
+        {{ csrf_field() }}
+        {{ method_field('PUT') }}
+        <input type="hidden" name="duplicate">
+    </form>
+    <form id="missing-form" method="POST" style="display: none;">
+        {{ csrf_field() }}
+        {{ method_field('PUT') }}
+        <input type="hidden" name="missing">
+    </form>
 </div>
 @endsection
 
