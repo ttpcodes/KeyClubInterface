@@ -38,6 +38,10 @@ class UpdateMeetingMembers implements ShouldQueue
      */
     public function handle()
     {
+        // Filter out anything that isn't a number to prevent database errors.
+        $this->members = array_filter($this->members, function ($id) {
+            return is_numeric($id);
+        });
         // Removes all existing members from the array to leave new members.
         $newMembers = array_diff($this->members, $this->meeting->members->modelKeys());
         // Removes all new members from the array to leave duplicate members.
@@ -45,7 +49,7 @@ class UpdateMeetingMembers implements ShouldQueue
         Log::info("Reduced " . count($this->members) . " to " . count($newMembers) . " new member entries");
         $members = Member::find($newMembers);
         Log::info($members->count() . " found out of " . count($newMembers));
-        
+
         $missing = array_diff($newMembers, $members->modelKeys(), $this->meeting->missing_members->modelKeys());
         $this->meeting->members()->saveMany($members);
         if (count($missing) != 0) {

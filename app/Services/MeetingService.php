@@ -101,62 +101,33 @@ class MeetingService
             ];
         }
         $response = [];
-        if ($request->has('meeting_json')) {
-            Log::info('Found meeting_json attribute. Parsing.');
-            if (!$request->has('members')) {
-                $request->members = [];
+        if ($request->has('duplicate')) {
+            \App\Jobs\RemoveMeetingDuplicateMembers::dispatch($meeting);
+        } else {
+            if ($request->has('meeting_json')) {
+                Log::info('Found meeting_json attribute. Parsing.');
+                if (!$request->has('members')) {
+                    $request->members = [];
+                }
+                $json = json_decode($request->input('meeting_json'));
+                $request->members = array_merge($json->members, $request->members);
             }
-            $json = json_decode($request->input('meeting_json'));
-            $request->members = array_merge($json->members, $request->members);
-            $request->members = array_filter($request->members, function ($id) {
-                return is_numeric($id);
-            });
-        }
-        if ($request->has('members')) {
-            //Log::info('Found members attribute. Parsing.');
-            // Removes all existing members from the array to leave new members.
-            //$newMembers = array_diff($request->members, $meeting->members->modelKeys());
-            // Removes all new members from the array to leave duplicate members.
-            //$duplicate = array_diff($request->members, $newMembers);
-            //Log::info("Reduced " . count($request->members) . " to " . count($newMembers) . " new member entries");
-            // Searches for new members where possible.
-            //$members = Member::find($newMembers);
-            //Log::info($members->count() . " found out of " . count($newMembers));
-
-            //$missing = array_diff($newMembers, $members->modelKeys(), $meeting->missing_members->modelKeys());
-            //$meeting->members()->saveMany($members);
-            //if (count($missing) != 0) {
-            //    $data = array();
-            //    foreach ($missing as $id) {
-            //        $data[] = array(
-            //            "id" => $id,
-            //            "meeting_id" => $meeting->id
-            //        );
-            //    }
-            //    $meeting->missing_members()->createMany($data);
-            //    $meeting->refresh();
-            //    $response = array_merge($response, [
-            //        'missing' => $meeting->missing_members->count()
-            //    ]);
-            //}
-            //$meeting->refresh();
-            //$response = array_merge($response, [
-            //   'duplicate' => $duplicate
-            //]);
-            UpdateMeetingMembers::dispatch($meeting, $request->input('members'));
-            $response = array_merge($response, [
-                'members' => true
-            ]);
-        }
-        if ($request->has('date_time')) {
-            $this->validate($request, [
-                'date_time' => 'required',
-                'information' => 'required'
-            ]);
-            $meeting->date_time = $request->date_time;
-            $meeting->information = $request->information;
-            $meeting->save();
-            $meeting->refresh();
+            if ($request->has('members')) {
+                UpdateMeetingMembers::dispatch($meeting, $request->input('members'));
+                $response = array_merge($response, [
+                    'members' => true
+                ]);
+            }
+            if ($request->has('date_time')) {
+                $this->validate($request, [
+                    'date_time' => 'required',
+                    'information' => 'required'
+                ]);
+                $meeting->date_time = $request->date_time;
+                $meeting->information = $request->information;
+                $meeting->save();
+                $meeting->refresh();
+            }
         }
         $response = array_merge($response, [
             'status' => 200,
