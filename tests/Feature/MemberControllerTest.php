@@ -22,6 +22,9 @@ class MemberControllerTest extends TestCase
      * login form, ensuring that the request should be going through the authentication
      * middleware.
      *
+     * This test, and the authorization test, assume that authenticated users are
+     * checked via the other tests for functionality.
+     *
      * @return void
      */
     public function testAuthentication()
@@ -116,7 +119,6 @@ class MemberControllerTest extends TestCase
         $request2->assertStatus(200);
         $request2->assertViewIs('member.index');
         $request2->assertViewHas('status')->assertViewHas('member')->assertViewHas('members');
-        $this->assertDatabaseHas('members', $formData);
     }
 
     public function testShow()
@@ -178,7 +180,6 @@ class MemberControllerTest extends TestCase
         $request2 = $this->actingAs($user)->put('/members/' . $member->id, $form);
         $request2->assertStatus(200);
         $request2->assertViewIs('member.show');
-        $request2->assertViewHas('status', 200);
         $this->assertDatabaseHas('members', $form);
     }
 
