@@ -26,7 +26,7 @@ class MemberPolicy
      * Determine whether the user can view the memberPolicy.
      *
      * @param  \App\User  $user
-     * @param  \App\MemberPolicy  $memberPolicy
+     * @param  \App\Member  $member
      * @return mixed
      */
     public function view(User $user, Member $member)
@@ -35,7 +35,7 @@ class MemberPolicy
     }
 
     /**
-     * Determine whether the user can create memberPolicies.
+     * Determine whether the user can create members.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -46,10 +46,10 @@ class MemberPolicy
     }
 
     /**
-     * Determine whether the user can update the memberPolicy.
+     * Determine whether the user can update the member.
      *
      * @param  \App\User  $user
-     * @param  \App\MemberPolicy  $memberPolicy
+     * @param  \App\Member  $member
      * @return mixed
      */
     public function update(User $user, Member $member)
@@ -61,7 +61,7 @@ class MemberPolicy
      * Determine whether the user can delete the memberPolicy.
      *
      * @param  \App\User  $user
-     * @param  \App\MemberPolicy  $memberPolicy
+     * @param  \App\Member  $member
      * @return mixed
      */
     public function delete(User $user, Member $member)
