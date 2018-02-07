@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Member;
+use App\Services\MemberService;
+
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
-    public function __construct()
+    public function __construct(MemberService $members)
     {
-        
+        $this->members = $members;
     }
 
     /**
@@ -20,17 +22,7 @@ class MemberController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+      return $this->members->index();
     }
 
     /**
@@ -41,7 +33,10 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $member = $this->members->store($request);
+        return [
+            'member' => $member
+        ];
     }
 
     /**
@@ -52,18 +47,7 @@ class MemberController extends Controller
      */
     public function show(Member $member)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Member  $member
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Member $member)
-    {
-        //
+        return $member;
     }
 
     /**
@@ -75,7 +59,10 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        //
+        $response = $this->members->update($request, $member);
+        return [
+            'member' => $response['member']
+        ];
     }
 
     /**
@@ -86,6 +73,15 @@ class MemberController extends Controller
      */
     public function destroy(Member $member)
     {
-        //
+        $response = $this->members->destroy($member);
+        if ($response['status'] === 403) {
+            return response()->json([
+                'error' => 'You cannot delete your own member instance.'
+            ], 403);
+        } else {
+            return [
+                'message' => 'Member deleted successfully.'
+            ];
+        }
     }
 }

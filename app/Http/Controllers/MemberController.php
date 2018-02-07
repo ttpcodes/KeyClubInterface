@@ -51,34 +51,7 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Member::class);
-        $this->validate($request, [
-            'id' => 'required|unique:members',
-            'first' => 'required',
-            'last' => 'required',
-            'email' => 'required',
-            'phone' => 'required',
-            'graduation' => 'required'
-        ]);
-        $member = Member::create([
-            'id' => $request->id,
-            'first' => $request->first,
-            'last' => $request->last,
-            'nickname' => $request->nickname,
-            'suffix' => $request->suffix,
-            'email' => $request->email,
-            'address1' => $request->address1,
-            'address2' => $request->address2,
-            'city' => $request->city,
-            'country' => $request->country,
-            'state' => $request->state,
-            'postal'=> $request->postal,
-            'graduation' => $request->graduation,
-            'phone' => $request->phone,
-            'birth' => $request->birth,
-            'gender' => $request->gender,
-            'secondary_id' => $request->secondary_id
-        ]);
+        $member = $this->members->store($request);
 
         return view('member.index', [
             'status' => 200,
@@ -123,51 +96,9 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        $this->authorize('update', $member);
-        Log::info($request->first);
-        $v = Validator::make($request->all(), [
-            'id' => 'required',
-            'first' => 'required',
-            'last' => 'required',
-            'email' => 'required',
-            'phone' => 'required',
-            'graduation' => 'required'
-        ]);
-        $v->sometimes('id', 'unique:members', function ($input) use ($member) {
-            return $input->id != $member->id;
-        });
-
-        if ($v->fails()) {
-            return back()
-                    ->withErrors($v)
-                    ->withInput();
-        }
-
-        $member->update([
-            'id' => $request->id,
-            'first' => $request->first,
-            'last' => $request->last,
-            'nickname' => $request->nickname,
-            'suffix' => $request->suffix,
-            'email' => $request->email,
-            'address1' => $request->address1,
-            'address2' => $request->address2,
-            'city' => $request->city,
-            'country' => $request->country,
-            'state' => $request->state,
-            'postal'=> $request->postal,
-            'graduation' => $request->graduation,
-            'phone' => $request->phone,
-            'birth' => $request->birth,
-            'gender' => $request->gender,
-            'secondary_id' => $request->secondary_id
-        ]);
-
-        $member->save();
-
+        $response = $this->members->update($request, $member);
         return view('member.show', [
-            'status' => 200,
-            'member' => $member
+            'member' => $response['member']
         ]);
     }
 
@@ -179,13 +110,11 @@ class MemberController extends Controller
      */
     public function destroy(Member $member)
     {
-        $this->authorize('delete', $member);
-
-        if (Auth::user()->member->id == $member->id) {
+        $response = $this->members->destroy($member);
+        if ($response['status'] === 403) {
             return back()->with('status', 403)->with('type', 'self');
+        } else {
+            return back()->with('status', 200)->with('type', 'delete');
         }
-
-        $member->delete();
-        return back()->with('status', 200)->with('type', 'delete');
     }
 }
