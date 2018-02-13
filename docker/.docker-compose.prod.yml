@@ -1,0 +1,72 @@
+version: "3"
+
+services:
+  database:
+    environment:
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    image: mariadb:latest
+    networks:
+      - default
+    volumes:
+      - database:/var/lib/mysql
+  http:
+    build:
+      context: services/http
+      dockerfile: Dockerfile
+    image: 127.0.0.1:5000/keyclubinterface_http
+    ports:
+      - "8080:80"
+    networks:
+      - default
+    volumes:
+      - storage:/srv/www/storage
+  horizon:
+    build:
+      context: services/prod/horizon
+      dockerfile: Dockerfile
+    image: 127.0.0.1:5000/keyclubinterface_horizon
+    configs:
+      - source: env
+        target: /srv/www/.env
+        uid: 9999
+        gid: 9999
+    networks:
+      - default
+    volumes:
+      - storage:/srv/www/storage
+  php:
+    build:
+      context: services/prod/php
+      dockerfile: Dockerfile
+    image: 127.0.0.1:5000/keyclubinterface_php
+    configs:
+      - source: env
+        target: /srv/www/.env
+        uid: 9999
+        gid: 9999
+    networks:
+      - default
+    volumes:
+      - storage:/srv/www/storage
+  redis:
+    image: redis:alpine
+    networks:
+      - default
+    volumes:
+      - redis:/data
+
+configs:
+  env:
+    file: .env
+
+networks:
+  default:
+    driver: overlay
+
+volumes:
+  database:
+  redis:
+  storage:

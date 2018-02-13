@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  chrome:
+    image: selenium/standalone-chrome
+    networks:
+      - default
+  database:
+    environment:
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    image: mariadb:latest
+    networks:
+      - default
+    volumes:
+      - database:/var/lib/mysql
+  http:
+    build:
+      context: services/http
+      dockerfile: Dockerfile
+      args:
+        uid: 1000
+        gid: 1000
+    ports:
+      - "8080:80"
+    networks:
+      - default
+    volumes:
+      - /path/to/git/repository:/srv/www
+  horizon:
+    build:
+      args:
+        uid: 1000
+        gid: 1000
+      context: services/dev/horizon
+      dockerfile: Dockerfile
+    networks:
+      - default
+    volumes:
+      - /path/to/git/repository:/srv/www
+  php:
+    build:
+      context: services/dev/php
+      dockerfile: Dockerfile
+      args:
+        uid: 1000
+        gid: 1000
+    image: keyclubinterfacedev_php
+    networks:
+      - default
+    volumes:
+      - /path/to/git/repository:/srv/www
+  redis:
+    image: redis:alpine
+    networks:
+      - default
+    volumes:
+      - redis:/data
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  database:
+  redis:

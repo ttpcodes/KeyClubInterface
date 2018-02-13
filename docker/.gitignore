@@ -1,0 +1,12 @@
+*
+
+# These two lines exempt the folder itself and its subdirectories.
+!services
+!services/**
+
+# And since GitHub is dumb, we need to add this line to satisfy the built in syntax highlighter.
+!services/*
+
+!.gitignore
+!.docker-compose.dev.yml
+!.docker-compose.prod.yml
