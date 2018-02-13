@@ -41,10 +41,8 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('officer-actions', function($user) {
             if (isset($user->member->officer)) {
-                Log::info('Officer instance found on member. Returning true on Gate officer-actions.');
                 return true;
             }
-            Log::info('Officer instance not found. Returning false on Gate officer-actions.');
             return false;
         });
 
