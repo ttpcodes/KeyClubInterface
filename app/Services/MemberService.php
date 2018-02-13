@@ -20,7 +20,7 @@ class MemberService
     /**
      * Display a listing of the resource.
      *
-     * @return \App\Member
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function index()
     {
@@ -31,7 +31,7 @@ class MemberService
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \App\Member
      */
     public function store(Request $request)
     {
@@ -67,7 +67,7 @@ class MemberService
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Member  $member
-     * @return \Illuminate\Http\Response
+     * @return \App\Member
      */
     public function update(Request $request, Member $member)
     {
@@ -112,7 +112,7 @@ class MemberService
      * Remove the specified resource from storage.
      *
      * @param  \App\Member  $member
-     * @return \Illuminate\Http\Response
+     * @return int
      */
     public function destroy(Member $member)
     {
