@@ -46,9 +46,7 @@ class UpdateMeetingMembers implements ShouldQueue
         $newMembers = array_diff($this->members, $this->meeting->members->modelKeys());
         // Removes all new members from the array to leave duplicate members.
         $duplicate = array_diff($this->members, $newMembers);
-        Log::info("Reduced " . count($this->members) . " to " . count($newMembers) . " new member entries");
         $members = Member::find($newMembers);
-        Log::info($members->count() . " found out of " . count($newMembers));
 
         $missing = array_diff($newMembers, $members->modelKeys(), $this->meeting->missing_members->modelKeys());
         $this->meeting->members()->saveMany($members);

@@ -35,7 +35,6 @@ class RemindController extends Controller
                 ]
             ]);
         } catch (ClientException $e) {
-            Log::info('Error on getting credentials for Remind.');
             return response()->json([
                 'status' => 401,
                 'error' => json_decode((string) $e->getResponse()->getBody(), true)
@@ -69,7 +68,6 @@ class RemindController extends Controller
         try {
             $response = $http->get('https://api.remind.com/v2/classes');
         } catch (ClientException $e) {
-            Log::info('Error on getting credentials for Remind.');
             return response()->json([
                 'status' => 401,
                 'error' => json_decode((string) $e->getResponse()->getBody(), true)
@@ -99,13 +97,11 @@ class RemindController extends Controller
                 ]
             ]);
         } catch (ClientException $e) {
-            Log::info('Error on getting credentials for Remind.');
             return response()->json([
                 'status' => 401,
                 'error' => json_decode((string) $e->getResponse()->getBody(), true)
             ], 401);
         } catch (ServerException $e) {
-            Log::info('Error on request.');
             return [
                 'status' => 500
             ];
@@ -123,7 +119,6 @@ class RemindController extends Controller
         try {
             $response = $http->get('https://api.remind.com/v2/user');
         } catch (ClientException $e) {
-            Log::info('Error on getting credentials for Remind.');
             return response()->json([
                 'status' => 401,
                 'error' => json_decode((string) $e->getResponse()->getBody(), true)

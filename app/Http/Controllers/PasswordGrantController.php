@@ -18,9 +18,7 @@ class PasswordGrantController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function login(Request $request) {
-        Log::info('Attempting verification of user credentials...');
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            Log::info('Successfully verified user. Now initiating password grant...');
             $http = new GuzzleHttp\Client;
             try {
                 $response = $http->post(config('app.url') . '/oauth/token', [
