@@ -25,26 +25,6 @@ class ApiMeetingControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function testAuthorization()
-    {
-        $member = factory(Member::class)->create();
-        // $user = factory(User::class)->create([
-        //     'member_id' => $member->id
-        // ]);
-        $meeting = factory(Meeting::class)->create();
-        Passport::actingAs(factory(User::class)->create([
-            'member_id' => $member->id
-        ]), ['*']);
-
-        $response = $this->json('POST', '/api/meetings');
-        $response2 = $this->json('PUT', '/api/meetings/' . $meeting->id);
-        $response3 = $this->json('DELETE', '/api/meetings/' . $meeting->id);
-
-        $response->assertStatus(403);
-        $response2->assertStatus(403);
-        $response3->assertStatus(403);
-    }
-
     public function testIndex()
     {
         $member = factory(Member::class)->create();
@@ -55,19 +35,46 @@ class ApiMeetingControllerTest extends TestCase
         $response = $this->json('GET', '/api/meetings');
 
         $response->assertStatus(200);
-        $response->assertJson([
-            'meetings' => true
-        ]);
+        $response->assertJson(Meeting::all()->jsonSerialize());
     }
 
     public function testStore()
     {
-        //
+        // Create relevant test models.
+        $member = factory(Member::class)->create();
+        factory(Officer::class)->create([
+            'member_id' => $member->id
+        ]);
+        Passport::actingAs(factory(User::class)->create([
+            'member_id' => $member->id
+        ]), ['*']);
+
+        $faker = \Faker\Factory::create();
+        $form = [
+            // For some odd reason, the time needs this formatting when used in
+            // API routes.
+            'date_time' => $faker->dateTime->format('Y-m-d H:i:s'),
+            'information' => $faker->paragraph
+        ];
+        $response = $this->json('POST', '/api/meetings', $form);
+        $response->assertJson($form);
     }
 
     public function testShow()
     {
-        //
+        // Create relevant test models.
+        $member = factory(Member::class)->create();
+        factory(Officer::class)->create([
+            'member_id' => $member->id
+        ]);
+        Passport::actingAs(factory(User::class)->create([
+            'member_id' => $member->id
+        ]), ['*']);
+        $meeting = factory(Meeting::class)->create();
+
+        $response = $this->json('GET', '/api/meetings/' . $meeting->id);
+        $meeting->date_time = $meeting->date_time->format('Y-m-d H:i:s');
+        $response->assertJson($meeting->jsonSerialize());
     }
 
     public function testUpdate()
@@ -81,11 +88,6 @@ class ApiMeetingControllerTest extends TestCase
             'member_id' => $member->id
         ]), ['*']);
 
-        // Test empty request.
-        $response = $this->json('PUT', '/api/meetings/' . $meeting->id);
-        $response->assertStatus(400);
-
-        // Test proper request.
         $faker = \Faker\Factory::create();
         $meetingData = [
             'date_time' => $faker->dateTime->format('Y-m-d H:i:s'),
@@ -97,23 +99,24 @@ class ApiMeetingControllerTest extends TestCase
             ]
         ];
         $response2 = $this->json('PUT', '/api/meetings/' . $meeting->id, array_merge($meetingData, $formData));
-        $response2->assertStatus(200);
-        $response2->assertJson([
-            'status' => true
-        ]);
-        $this->assertDatabaseHas('meetings', $meetingData);
-        $this->assertDatabaseHas('meeting_member', [
-            'meeting_id' => $meeting->id,
-            'member_id' => $member->id
-        ]);
-        $this->assertDatabaseHas('missing_members', [
-            'id' => $member->id + 1,
-            'meeting_id' => $meeting->id
-        ]);
+        $response2->assertJson($meetingData);
     }
 
     public function testDelete()
     {
-        //
+        // Create relevant test models.
+        $member = factory(Member::class)->create();
+        $meeting = factory(Meeting::class)->create();
+        factory(Officer::class)->create([
+            'member_id' => $member->id
+        ]);
+        Passport::actingAs(factory(User::class)->create([
+            'member_id' => $member->id
+        ]), ['*']);
+
+        $response = $this->json('DELETE', '/api/meetings/' . $meeting->id);
+        $response->assertJson([
+            'message' => 'Meeting deleted successfully.'
+        ]);
     }
 }

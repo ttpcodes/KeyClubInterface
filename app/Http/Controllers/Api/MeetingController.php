@@ -23,20 +23,7 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        return [
-            'status' => 200,
-            'meetings' => $this->meetings->index()
-        ];
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $this->meetings->index();
     }
 
     /**
@@ -47,7 +34,7 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
-        $this->meetings->store($request);
+        return $this->meetings->store($request);
     }
 
     /**
@@ -62,17 +49,6 @@ class MeetingController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Meeting  $meeting
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Meeting $meeting)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -81,12 +57,7 @@ class MeetingController extends Controller
      */
     public function update(Request $request, Meeting $meeting)
     {
-        $response = $this->meetings->update($request, $meeting);
-        if ($response['status'] === 400) {
-            return response()->json($response, 400);
-        } else {
-            return $response;
-        }
+        return $this->meetings->update($request, $meeting);
     }
 
     /**
@@ -98,5 +69,8 @@ class MeetingController extends Controller
     public function destroy(Meeting $meeting)
     {
         $this->meetings->destroy($meeting);
+        return [
+            'message' => 'Meeting deleted successfully.'
+        ];
     }
 }

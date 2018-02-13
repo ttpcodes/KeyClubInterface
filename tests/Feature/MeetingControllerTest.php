@@ -32,28 +32,6 @@ class MeetingControllerTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-
-    public function testAuthorization()
-    {
-        $member = factory(Member::class)->create();
-        $user = factory(User::class)->create([
-            'member_id' => $member->id
-        ]);
-        $meeting = factory(Meeting::class)->create();
-
-        $response = $this->actingAs($user)->get('/meetings/create');
-        $response2 = $this->actingAs($user)->post('/meetings');
-        $response3 = $this->actingAs($user)->get('/meetings/' . $meeting->id . '/edit');
-        $response4 = $this->actingAs($user)->put('/meetings/' . $meeting->id);
-        $response5 = $this->actingAs($user)->delete('/meetings/' . $meeting->id);
-
-        $response->assertStatus(403);
-        $response2->assertStatus(403);
-        $response3->assertStatus(403);
-        $response4->assertStatus(403);
-        $response5->assertStatus(403);
-    }
-
     public function testIndex()
     {
         $member = factory(Member::class)->create();
@@ -64,8 +42,8 @@ class MeetingControllerTest extends TestCase
         $response = $this->actingAs($user)->get('/meetings');
 
         $response->assertStatus(200);
-        // $response->assertViewIs('meeting/index');
-        $response->assertViewHas('meetings');
+        $response->assertViewIs('meeting.index');
+        $response->assertViewHas('meetings', Meeting::all());
     }
 
     public function testCreate()
@@ -80,6 +58,7 @@ class MeetingControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get('/meetings/create');
         $response->assertStatus(200);
+        $response->assertViewIs('meeting.create');
     }
 
     public function testStore()
@@ -96,6 +75,7 @@ class MeetingControllerTest extends TestCase
 
         $response = $this->actingAs($user)->post('/meetings');
         $response->assertStatus(302);
+        // Redirects do not have an associated view, do not check for views.
 
         // Test normal requests.
         $faker = \Faker\Factory::create();
@@ -104,8 +84,8 @@ class MeetingControllerTest extends TestCase
             'information' => $faker->paragraph
         ];
         $response2 = $this->actingAs($user)->post('/meetings', $form);
-        $response2->assertStatus(302);
-        $this->assertDatabaseHas('meetings', $form);
+        $response2->assertStatus(200);
+        $response2->assertViewIs('meeting.index');
     }
 
     public function testShow()
@@ -121,6 +101,9 @@ class MeetingControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get('/meetings/' . $meeting->id);
         $response->assertStatus(200);
+        $response->assertViewIs('meeting.show');
+        // Strict value comparisons cannot be run here due to issues with Laravel's
+        // model logistics.
         $response->assertViewHas('meeting');
     }
 
@@ -137,11 +120,13 @@ class MeetingControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get('/meetings/' . $meeting->id . '/edit');
         $response->assertStatus(200);
-        // $response->assertViewHas('meeting');
+        $response->assertViewIs('meeting.edit');
+        $response->assertViewHas('meeting');
     }
 
     public function testUpdate()
     {
+        // Create relevant test models.
         $member = factory(Member::class)->create();
         $officer = factory(Officer::class)->create([
             'member_id' => $member->id
@@ -150,11 +135,8 @@ class MeetingControllerTest extends TestCase
             'member_id' => $member->id
         ]);
         $meeting = factory(Meeting::class)->create();
-        // Test empty request.
-        $response = $this->actingAs($user)->put('/meetings/' . $meeting->id);
-        $response->assertStatus(400);
 
-        // Test the submission of the web form.
+        // Test web route request.
         $faker = \Faker\Factory::create();
         $meetingData = [
             'date_time' => $faker->dateTime->format('Y-m-d H:i:s'),
@@ -165,22 +147,25 @@ class MeetingControllerTest extends TestCase
                 $member->id, $member->id + 1
             ]
         ];
-        $response2 = $this->actingAs($user)->put('/meetings/' . $meeting->id, array_merge($meetingData, $formData));
-        $response2->assertStatus(200);
-        $response2->assertViewHas('status', 200);
-        $this->assertDatabaseHas('meetings', $meetingData);
-        $this->assertDatabaseHas('meeting_member', [
-            'meeting_id' => $meeting->id,
-            'member_id' => $member->id
-        ]);
-        $this->assertDatabaseHas('missing_members', [
-            'id' => $member->id + 1,
-            'meeting_id' => $meeting->id
-        ]);
+        $response = $this->actingAs($user)->put('/meetings/' . $meeting->id, array_merge($meetingData, $formData));
+        $response->assertStatus(200);
+        $response->assertViewIs('meeting.show');
+        $response->assertViewHas('meeting');
     }
 
     public function testDelete()
     {
-        //
+        // Create relevant test models.
+        $member = factory(Member::class)->create();
+        $officer = factory(Officer::class)->create([
+            'member_id' => $member->id
+        ]);
+        $user = factory(User::class)->create([
+            'member_id' => $member->id
+        ]);
+        $meeting = factory(Meeting::class)->create();
+
+        $response = $this->actingAs($user)->delete('/meetings/' . $meeting->id);
+        $response->assertStatus(302);
     }
 }

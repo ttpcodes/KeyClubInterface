@@ -28,9 +28,8 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        $meetings = $this->meetings->index();
         return view('meeting/index', [
-            'meetings' => $meetings
+            'meetings' => $this->meetings->index()
         ]);
     }
 
@@ -42,7 +41,7 @@ class MeetingController extends Controller
     public function create()
     {
         $this->authorize('create', Meeting::class);
-        return view('meeting/create');
+        return view('meeting.create');
     }
 
     /**
@@ -53,16 +52,10 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Meeting::class);
-        $this->validate($request, [
-            'date_time' => 'required',
-            'information' => 'required'
+        $member = $this->meetings->store($request);
+        return view('meeting.index', [
+            'meetings' => $this->meetings->index()
         ]);
-        Meeting::create([
-            'date_time' => $request->date_time,
-            'information' => $request->information
-        ]);
-        return redirect()->route('home');
     }
 
     /**
@@ -73,7 +66,7 @@ class MeetingController extends Controller
      */
     public function show(Meeting $meeting)
     {
-        return view('meeting/show', [
+        return view('meeting.show', [
             'meeting' => $meeting
         ]);
     }
@@ -103,41 +96,9 @@ class MeetingController extends Controller
     public function update(Request $request, Meeting $meeting)
     {
         $response = $this->meetings->update($request, $meeting);
-        if ($response['status'] === 400) {
-            return response()->json($response, 400);
-        }
-        return view('meeting/show', $response);
-        // $this->authorize('update', $meeting);
-        // if ($request->has('members')) {
-        //     $newMembers = array_diff($request->members, $meeting->members->modelKeys());
-        //     $duplicate = array_diff($request->members, $newMembers);
-        //     Log::info("Reduced " . count($request->members) . " to " . count($newMembers) . " new member entries");
-        //     $members = Member::find($newMembers);
-        //     Log::info($members->count() . " found out of " . count($newMembers));
-        //     $missing = array_diff($newMembers, $members->modelKeys());
-        //     $meeting->members()->saveMany($members);
-        //     if (count($missing) != 0) {
-        //         $newMissing = array_diff($missing, $meeting->missing_members->modelKeys());
-        //         $data = array();
-        //         foreach ($newMissing as $id) {
-        //             $data[] = array(
-        //                 "id" => $id,
-        //                 "meeting_id" => $meeting->id
-        //             );
-        //         }
-        //         MissingMember::insert($data);
-        //     }
-        //     return [
-        //         'status' => 'success',
-        //         'missing' => $missing,
-        //         'duplicate' => $duplicate
-        //     ];
-        // } else {
-        //     $this->validate($request, [
-        //         'date_time' => 'required',
-        //         'information' => 'required'
-        //     ]);
-        // }
+        return view('meeting.show', [
+            'meeting' => $meeting
+        ]);
     }
 
     /**
@@ -148,6 +109,7 @@ class MeetingController extends Controller
      */
     public function destroy(Meeting $meeting)
     {
-        $this->authorize('delete', $meeting);
+        $this->meetings->destroy($meeting);
+        return redirect()->route('meetings.index');
     }
 }
