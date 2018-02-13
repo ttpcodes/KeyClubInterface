@@ -26,9 +26,8 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $members = $this->members->index();
-        return view('member/index', [
-            'members' => $members
+        return view('member.index', [
+            'members' => $this->members->index()
         ]);
     }
 
@@ -40,7 +39,7 @@ class MemberController extends Controller
     public function create()
     {
         $this->authorize('create', Member::class);
-        return view('member/create');
+        return view('member.create');
     }
 
     /**
@@ -54,8 +53,6 @@ class MemberController extends Controller
         $member = $this->members->store($request);
 
         return view('member.index', [
-            'status' => 200,
-            'member' => $member,
             'members' => Member::all()
         ]);
     }
@@ -96,9 +93,8 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        $response = $this->members->update($request, $member);
         return view('member.show', [
-            'member' => $response['member']
+            'member' => $this->members->update($request, $member)
         ]);
     }
 
@@ -111,10 +107,10 @@ class MemberController extends Controller
     public function destroy(Member $member)
     {
         $response = $this->members->destroy($member);
-        if ($response['status'] === 403) {
-            return back()->with('status', 403)->with('type', 'self');
+        if ($response === 403) {
+            return back();
         } else {
-            return back()->with('status', 200)->with('type', 'delete');
+            return redirect()->route('members.index');
         }
     }
 }

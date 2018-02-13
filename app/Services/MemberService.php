@@ -103,11 +103,9 @@ class MemberService
             'secondary_id' => $request->secondary_id
         ]);
         $member->save();
+        $member->refresh();
 
-        return [
-            'status' => 200,
-            'member' => $member
-        ];
+        return $member;
     }
 
     /**
@@ -121,13 +119,9 @@ class MemberService
         $this->authorize('delete', $member);
 
         if (Auth::user()->member->id == $member->id) {
-            return [
-                'status' => 403
-            ];
+            return 403;
         }
         $member->delete();
-        return [
-            'status' => 200
-        ];
+        return 200;
     }
 }

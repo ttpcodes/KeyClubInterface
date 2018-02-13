@@ -33,10 +33,7 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        $member = $this->members->store($request);
-        return [
-            'member' => $member
-        ];
+        return $this->members->store($request);
     }
 
     /**
@@ -59,10 +56,7 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        $response = $this->members->update($request, $member);
-        return [
-            'member' => $response['member']
-        ];
+        return $this->members->update($request, $member);
     }
 
     /**
@@ -74,7 +68,7 @@ class MemberController extends Controller
     public function destroy(Member $member)
     {
         $response = $this->members->destroy($member);
-        if ($response['status'] === 403) {
+        if ($response === 403) {
             return response()->json([
                 'error' => 'You cannot delete your own member instance.'
             ], 403);
